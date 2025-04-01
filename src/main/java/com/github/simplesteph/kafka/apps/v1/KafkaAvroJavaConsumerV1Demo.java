@@ -13,20 +13,7 @@ import java.util.Properties;
 public class KafkaAvroJavaConsumerV1Demo {
 
     public static void main(String[] args) {
-        Properties properties = new Properties();
-        // normal consumer
-        properties.setProperty("bootstrap.servers","127.0.0.1:9092");
-        properties.put("group.id", "customer-consumer-group-v1");
-        properties.put("auto.commit.enable", "false");
-        properties.put("auto.offset.reset", "earliest");
-
-        // avro part (deserializer)
-        properties.setProperty("key.deserializer", StringDeserializer.class.getName());
-        properties.setProperty("value.deserializer", KafkaAvroDeserializer.class.getName());
-        properties.setProperty("schema.registry.url", "http://127.0.0.1:8081");
-        properties.setProperty("specific.avro.reader", "true");
-
-        KafkaConsumer<String, Customer> kafkaConsumer = new KafkaConsumer<>(properties);
+        KafkaConsumer<String, Customer> kafkaConsumer = getStringCustomerKafkaConsumer();
         String topic = "customer-avro";
         kafkaConsumer.subscribe(Collections.singleton(topic));
 
@@ -43,5 +30,23 @@ public class KafkaAvroJavaConsumerV1Demo {
 
             kafkaConsumer.commitSync();
         }
+    }
+
+    private static KafkaConsumer<String, Customer> getStringCustomerKafkaConsumer() {
+        Properties properties = new Properties();
+        // normal consumer
+        properties.setProperty("bootstrap.servers","127.0.0.1:9092");
+        properties.put("group.id", "customer-consumer-group-v1");
+        properties.put("auto.commit.enable", "false");
+        properties.put("auto.offset.reset", "earliest");
+
+        // avro part (deserializer)
+        properties.setProperty("key.deserializer", StringDeserializer.class.getName());
+        properties.setProperty("value.deserializer", KafkaAvroDeserializer.class.getName());
+        properties.setProperty("schema.registry.url", "http://127.0.0.1:8081");
+        properties.setProperty("specific.avro.reader", "true");
+
+        KafkaConsumer<String, Customer> kafkaConsumer = new KafkaConsumer<String, Customer>(properties);
+        return kafkaConsumer;
     }
 }
