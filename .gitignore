@@ -1,0 +1,3 @@
+# Ignore the files and directory generated through maven
+.idea/
+target/
